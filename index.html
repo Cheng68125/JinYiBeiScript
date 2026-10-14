@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跑道上的答案</title>
+<meta name="description" content="《跑道上的答案》剧本阅读页">
+<style>
+    :root {
+        --bg-primary: #f7f4ef;
+        --bg-secondary: #efe9e0;
+        --bg-card: #fbf9f6;
+        --text-primary: #3d3a36;
+        --text-secondary: #6b6660;
+        --text-muted: #9a948c;
+        --accent-sage: #8a9a8b;
+        --accent-rose: #b3a0a0;
+        --accent-slate: #7d8a99;
+        --shadow-soft: 0 2px 12px rgba(61, 58, 54, 0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 2;
+        letter-spacing: 0.03em;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* 滚动淡入 */
+    .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 1s ease, transform 1s ease;
+    }
+    .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1; transform: none; transition: none; }
+        html { scroll-behavior: auto; }
+    }
+
+    /* 顶部标题栏 */
+    .header {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 100;
+        padding: 16px 20px;
+        text-align: center;
+        background: rgba(247, 244, 239, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: var(--shadow-soft);
+    }
+    .header-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        margin-bottom: 4px;
+    }
+    .header-subtitle {
+        font-size: 0.72rem;
+        font-weight: 300;
+        letter-spacing: 0.22em;
+        color: var(--text-muted);
+    }
+
+    /* 主容器 */
+    .container {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 104px 24px 40px;
+    }
+
+    /* 封面标题区 */
+    .script-header {
+        text-align: center;
+        padding: 46px 20px;
+        margin-bottom: 56px;
+        background: var(--bg-card);
+        border-radius: 10px;
+        box-shadow: var(--shadow-soft);
+    }
+    .script-title {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        margin-bottom: 14px;
+        text-indent: 0.22em;
+    }
+    .script-meta {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        letter-spacing: 0.08em;
+    }
+
+    /* 人物列表 */
+    .cast-section { margin-bottom: 48px; }
+    .cast-title {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        color: var(--accent-sage);
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--bg-secondary);
+    }
+    .cast-item {
+        margin-bottom: 10px;
+        padding: 12px 16px;
+        background: var(--bg-card);
+        border-radius: 6px;
+        box-shadow: var(--shadow-soft);
+    }
+    .cast-name {
+        font-weight: 600;
+        color: var(--accent-slate);
+        margin-right: 8px;
+    }
+    .cast-desc {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+    }
+
+    /* 舞台说明 */
+    .stage-note {
+        margin: 40px 0;
+        padding: 20px 24px;
+        background: var(--bg-secondary);
+        border-left: 3px solid var(--accent-sage);
+        border-radius: 0 6px 6px 0;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.95;
+    }
+    .stage-note-label {
+        font-weight: 600;
+        color: var(--accent-sage);
+        margin-right: 6px;
+    }
+
+    /* 幕标题 */
+    .act-title {
+        position: relative;
+        margin: 72px 0 30px;
+        padding: 18px 0;
+        text-align: center;
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+    }
+    .act-title::before,
+    .act-title::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 1px;
+        background: var(--accent-sage);
+        opacity: 0.45;
+    }
+    .act-title::before { top: 0; }
+    .act-title::after { bottom: 0; }
+
+    /* 场景标题 */
+    .scene-title {
+        display: inline-block;
+        margin: 40px 0 18px;
+        padding: 9px 16px;
+        background: var(--bg-card);
+        border-radius: 6px;
+        box-shadow: var(--shadow-soft);
+        font-size: 0.98rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: var(--accent-rose);
+    }
+
+    /* 舞台指示 */
+    .stage-direction {
+        margin: 16px 0;
+        padding: 10px 18px;
+        font-size: 0.9rem;
+        line-height: 1.95;
+        color: var(--text-muted);
+    }
+    .stage-direction.center { text-align: center; }
+
+    /* 台词 */
+    .dialogue {
+        position: relative;
+        margin: 20px 0;
+        padding-left: 20px;
+    }
+    .dialogue::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 8px; bottom: 8px;
+        width: 2px;
+        border-radius: 1px;
+        background: var(--bg-secondary);
+    }
+    .dialogue-speaker {
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: var(--accent-slate);
+    }
+    .dialogue-text {
+        font-size: 1rem;
+        line-height: 2.05;
+        text-align: justify;
+    }
+
+    /* 旁白 */
+    .narration {
+        margin: 24px 0;
+        padding: 22px 26px;
+        background: var(--bg-card);
+        border-radius: 8px;
+        box-shadow: var(--shadow-soft);
+        text-align: center;
+        font-size: 0.95rem;
+        line-height: 2.05;
+        color: var(--text-secondary);
+    }
+    .narration-label {
+        font-weight: 600;
+        color: var(--accent-sage);
+        margin-right: 8px;
+    }
+
+    /* 尾声 */
+    .epilogue {
+        margin-top: 80px;
+        padding: 42px 26px;
+        background: var(--bg-card);
+        border-radius: 10px;
+        box-shadow: var(--shadow-soft);
+    }
+    .epilogue-title {
+        margin-bottom: 24px;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        color: var(--accent-rose);
+    }
+
+    /* 完 */
+    .fin {
+        margin-top: 96px;
+        padding: 60px 0 120px;
+        text-align: center;
+    }
+    .fin-text {
+        font-size: 1.5rem;
+        font-weight: 300;
+        letter-spacing: 0.5em;
+        text-indent: 0.5em;
+        color: var(--text-muted);
+    }
+    .fin-line {
+        width: 60px;
+        height: 1px;
+        margin: 22px auto 0;
+        background: var(--accent-sage);
+        opacity: 0.45;
+    }
+
+    /* 移动端 */
+    @media (max-width: 640px) {
+        .container { padding: 96px 18px 20px; }
+        .script-title { font-size: 1.6rem; }
+        .header-title { font-size: 1.08rem; }
+        .act-title { font-size: 1.05rem; margin: 52px 0 24px; }
+        .dialogue { padding-left: 16px; }
+        .dialogue-text { font-size: 0.95rem; }
+        .narration,
+        .epilogue { padding: 20px 18px; }
+    }
+
+    /* 滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb {
+        background: var(--text-muted);
+        border-radius: 3px;
+        opacity: 0.35;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+    ::selection {
+        background: var(--accent-sage);
+        color: var(--bg-primary);
+    }
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-title">跑道上的答案</div>
+    <div class="header-subtitle">计算机与人工智能学院</div>
+</header>
+
+<main class="container">
+
+    <section class="script-header reveal">
+        <div class="script-title">跑道上的答案</div>
+        <div class="script-meta">时长：约 8 分钟</div>
+    </section>
+
+    <section class="cast-section reveal">
+        <div class="cast-title">人 物</div>
+        <div class="cast-item"><span class="cast-name">林晓</span><span class="cast-desc">女，大一，刚进入大学就对课程和小组任务过度焦虑，长期失眠心慌</span></div>
+        <div class="cast-item"><span class="cast-name">陈一帆</span><span class="cast-desc">男，大三，刚拿到实习 offer，总怕自己"露馅"</span></div>
+        <div class="cast-item"><span class="cast-name">沈悦</span><span class="cast-desc">女，大四，新进科研组，文献读不懂却不敢问；身处AI时代，工具和知识变化太快，她还不知道该如何确定研究方向，常担心自己选错就会被时代落下</span></div>
+        <div class="cast-item"><span class="cast-name">赵宁</span><span class="cast-desc">男，大四，已通过实习公司的录用，却因公司临时修改上班时间，考完试就要马上去上班，错过和好友的毕业旅行，因此深陷"被落下"感</span></div>
+        <div class="cast-item"><span class="cast-name">王浩</span><span class="cast-desc">男，大三，校跑团成员，松弛感本体</span></div>
+        <div class="cast-item"><span class="cast-name">张叔</span><span class="cast-desc">男，五十多岁，教学楼 / 操场保安，刀子嘴豆腐心</span></div>
+        <div class="cast-item"><span class="cast-name">李桐</span><span class="cast-desc">女，研一，沈悦的师姐</span></div>
+        <div class="cast-item"><span class="cast-name">小磊</span><span class="cast-desc">男，大三，陈一帆室友，心大</span></div>
+        <div class="cast-item"><span class="cast-name">组员甲 / 组员乙</span><span class="cast-desc">画外音</span></div>
+        <div class="cast-item"><span class="cast-name">旁白</span><span class="cast-desc"></span></div>
+    </section>
+
+    <section class="stage-note reveal">
+        <span class="stage-note-label">舞台说明</span>全剧不安排长距离跑动。跑步一律用"原地慢跑 + 灯光流转 + 脚步声效"象征性呈现，时间控制在十几秒内；人物交流主要发生在自习室座位、操场看台、跑道边。
+    </section>
+
+    <section class="reveal">
+        <h2 class="act-title">第一幕｜自习室：十点半的压力锅</h2>
+
+        <div class="scene-title">【场景一】自习室　夜</div>
+        <div class="stage-direction">（舞台分为三块区域，三组人物分开表演，灯光轮流打，其余区域保持暗场）</div>
+        <div class="stage-direction">（第一块冷白光亮起。键盘声、翻书声、叹气声混成一片。墙上时钟 22:17。林晓面前摊着半篇论文、三本教材、开着七个窗口的电脑。）</div>
+        <div class="stage-direction">（手机连续震动。微信群消息以"画外音"方式呈现。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">组员甲（画外音）</div>
+            <div class="dialogue-text">@林晓 林晓，PPT 你那部分弄完没？咱组就差你了哈。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">组员乙（画外音）</div>
+            <div class="dialogue-text">我这边网卡，明天的展示就靠你了，加油！</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（压低声音，对着手机）我一个人做了分工表上三个人的量，还有你们的网还真会挑时候卡的。</div>
+        </div>
+        <div class="stage-direction">（她打字，停顿，全部删掉，深吸一口气，回复 ——）</div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（面无表情地念出自己打的字）"好的，今晚发。"</div>
+        </div>
+
+        <div class="stage-direction">（第一块灯光渐暗，第二块灯光亮起。沈悦对着英文文献发呆，PDF 上打了 39 个问号。李桐抱着一摞资料经过，停下。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">李桐</div>
+            <div class="dialogue-text">沈悦，上周发你的文献看了吗？有不懂的随时问我，别攒着。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">（条件反射般坐直）看、看了！没问题师姐，我都看懂了！</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">李桐</div>
+            <div class="dialogue-text">（笑）真的？这篇我当年看了整整一周。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">（笑容僵硬）我…… 我基础可能比较好，哈哈。</div>
+        </div>
+        <div class="stage-direction">（李桐拍拍她肩膀走了。沈悦的笑容瞬间垮掉，把头埋进书里。）</div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">（对书耳语）每个字母我都认识，连在一起却像咒语……AI时代降临，好像研究方向越来越多，可我甚至都不知道该从哪里开始。</div>
+        </div>
+
+        <div class="stage-direction">（第二块灯光渐暗，第三块灯光亮起。陈一帆抱着电脑挪到角落，第一千遍刷新实习录用邮件。小磊拎着两串烤串溜达进来。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">小磊</div>
+            <div class="dialogue-text">帆哥，还看你那 offer 呢？邮件能让你看出花来？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">我总觉得他们发错人了。万一入职第一天，他们发现我什么都不会……</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">小磊</div>
+            <div class="dialogue-text">（咬一口烤串）我投了三十份简历，全石沉大海，我不照样吃得下宵夜？你拿到 offer 的人愁，没拿到的人怎么办？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">你不懂，这叫"得偿所愿的恐慌"。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">小磊</div>
+            <div class="dialogue-text">我只知道再不去入职，你购物车里那个工位靠垫都要下架了。听我的，先摸清楚公司厕所位置，别的以后再说。</div>
+        </div>
+
+        <div class="stage-direction">（第三块区域里，赵宁接到电话，压低声音走到角落。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">喂，妈……嗯，票我退了，民宿也退了。公司临时把上班时间提前了，考完试就得马上去报到，正好错过毕业旅行，没办法。钱够用，我这儿真够用，你别给我转。（停顿，声音发紧）你们别省，给我留点饭就行。我？我跟同学玩呢，可热闹了，挂了啊。</div>
+        </div>
+        <div class="stage-direction">（挂断。他刷开朋友圈：同学在洱海边比耶，九宫格热气腾腾。他点赞，手指停在屏幕上，慢慢把手机扣在桌上。）</div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">（苦笑）他们在为毕业旅行倒计时，我在为上班报到倒计时。好像所有人都在往前跑，就我被留在了原地。</div>
+        </div>
+
+        <div class="stage-direction">（第三块灯光渐暗，三块区域短暂全暗。22:30，保安张叔推门进来，钥匙串哗啦响。随后三块区域重新亮起，众人开始收拾。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">张叔</div>
+            <div class="dialogue-text">同学们，十点半了啊，楼要锁了！知识可以明天再学，楼可不陪你们过夜。</div>
+        </div>
+        <div class="stage-direction">（众人慢吞吞收拾。林晓盯着电脑右下角红色的"电量 10%"，又看看自己没写完的论文，手开始发抖。）</div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">张叔</div>
+            <div class="dialogue-text">（走过来）这位同学，走了走了 —— 哎，你脸色不太好啊？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（猛地合上电脑，勉强挤出微笑）没事，叔。</div>
+        </div>
+        <div class="stage-direction">（椅子腿划出刺耳一声，满座侧目。她抱起东西，几乎是逃出了自习室。）</div>
+    </section>
+
+    <section class="reveal">
+        <h2 class="act-title">第二幕｜操场：看台上捡到的人</h2>
+
+        <div class="scene-title">【场景二】操场看台　夜</div>
+        <div class="stage-direction">（灯光转深蓝。林晓走到看台最高一级，抱着膝盖坐下，肩膀剧烈起伏，哭不出声。远处王浩和一个跑团成员的身影一闪而过 —— 用原地慢跑 + 灯光扫过表现。）</div>
+        <div class="stage-direction">（王浩注意到她，折返，在看台边停下，保持距离。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">同学，你还好吗？—— 这话问的，看你这样子就不太好。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（别过脸）透气。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">我叫王浩，跑团的。我们团有个传统：看台上捡到的人，都要请她动一动。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">我不跑步，体测八百米靠走。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">巧了，不追求速度。跑不动就走，走不动就停，操场又不会开除你。（伸手）就当把脑子里那些弹窗，一个个甩没。</div>
+        </div>
+
+        <div class="stage-direction">（林晓迟疑，起身。两人原地慢跑，灯光在他们身后缓缓流转，脚步声由乱到稳，十几秒后，林晓放慢，双手撑膝，大口喘气。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（喘着，忽然开口）我今天心脏跳得像要从身体里逃出去。我还以为…… 我要交代在自习室了。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">（递水）我期末也这样，辅导员拉着我们跑了两周，说人动起来，那些乱七八糟的激素能消停点。具体什么激素我没记住，就记住睡得香了。（顿了顿）不过话说前头，要是难受得扛不住，别自己硬扛，光跑步不顶事。咱学校心理健康中心一直开着，有需要可以去找老师、找医生，哪怕简单咨询一下，聊会天都行。去心理中心又不是丢人，更不是说明你有问题，别因为不好意思把自己憋住。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（愣了一下，点头）…… 嗯。</div>
+        </div>
+        <div class="stage-direction">（她仰头灌了口水，长长呼出一口气，笑了一下 —— 今晚第一个笑容。）</div>
+
+        <div class="scene-title">【场景三】宿舍　深夜</div>
+        <div class="stage-direction">（林晓把写满任务的便利贴翻了个面，写下"睡觉"两个字，躺下，关灯。）</div>
+        <div class="stage-direction">（字幕：这是她五天来第一次，在两点前睡着。）</div>
+    </section>
+
+    <section class="reveal">
+        <h2 class="act-title">第三幕｜看台集结：每个人都揣着一座山</h2>
+
+        <div class="scene-title">【场景四】操场看台　此后数晚（连续短场景）</div>
+        <div class="stage-direction">（场景拼接，节奏轻快。所有人都在看台或站或坐，无人跑动。）</div>
+        <div class="stage-direction">（第二晚。陈一帆独自坐在看台，对着电脑念"入职自我介绍"，念到第十七版。王浩和林晓散步经过。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">（喃喃）大家好，我叫陈一帆，毕业于…… 不行，太傻了。大家好，我是新来的…… 更傻。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">你也是"万一"派的？我是"万一派掌门"。下来坐会儿？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">万一自我介绍搞砸了，他们第一天就后悔招我……</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">那你先把自我介绍念给跑道听，跑道不评价人。</div>
+        </div>
+        <div class="stage-direction">（陈一帆合上电脑，挪到了他们那一排。）</div>
+
+        <div class="stage-direction">（第三晚。沈悦抱着文献，低着头沿跑道边走过，被陈一帆认出。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">沈悦？你那篇文献，我听助教讲过类似的，我也没整明白。你不是还在纠结研究方向吗？要不回头一起问师姐？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">（如临大敌）你敢去问？！我连方向都还没想好，现在去问文献，会不会显得我什么准备都没有？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">（指看台）我现在敢了。坐。</div>
+        </div>
+        <div class="stage-direction">（沈悦犹豫着坐下，把那摞书抱得更紧了。）</div>
+
+        <div class="stage-direction">（第四晚。赵宁一个人坐在看台最低一级，手机循环播放同学的旅行 vlog。林晓在他旁边坐下，递水。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">第几遍了？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">第十三遍了。他们在看苍山雪，我在看他们看苍山雪。公司临时改了上班时间，我考完就要去报到，和好友的毕业旅行只能退了。工作还没开始，旅行先没了，我就是觉得所有人都在往前走，只有我停着。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">（远处喊）那你现在不就坐在跑道边上吗？想动，随时能动。</div>
+        </div>
+        <div class="stage-direction">（赵宁一怔，把手机揣回兜里。）</div>
+
+        <div class="scene-title">【场景五】看台　夜（坦白时刻）</div>
+        <div class="stage-direction">（五个人围坐成半圈，像在开一场没有主题的班会。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">我先招。实习靠垫我到现在没敢买，怕三天被辞退，靠垫寄到公司丢人。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">（小声）我给师姐打的求助消息，最长一条写了四百字，里面全是文献和研究方向的问题，最后发出去的还是"好的收到"。</div>
+        </div>
+        <div class="stage-direction">（众人笑，善意的笑。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">我每天晚上数心跳，数到一百二就开始想，我会不会猝死在自习室，然后论文还没保存。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">我甚至想过盗一张洱海的图发朋友圈，假装我也去了。</div>
+        </div>
+        <div class="stage-direction">（短暂沉默，只有风声。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">发现没有？这些话在自习室一句都挤不出来，到了看台上，全招了。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">可能因为到了这儿，大家都一样狼狈，谁也装不了。</div>
+        </div>
+    </section>
+
+    <section class="reveal">
+        <h2 class="act-title">第四幕｜配速：停下来的那一圈</h2>
+
+        <div class="scene-title">【场景六】跑道边　夜（全剧高潮）</div>
+        <div class="stage-direction">（王浩站起身，拍了拍裤子。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">今晚教你们个新玩法，咱们就冲一小段，跟上我啊。</div>
+        </div>
+
+        <div class="stage-direction">（五个人站成一排原地慢跑，灯光快速扫过，配鼓点般的脚步声效。灯光里，人影渐渐"拉开距离"：王浩、陈一帆在前排，林晓的脚步越来越沉，节奏乱掉。）</div>
+        <div class="stage-direction">（鼓点骤停。林晓停下，弯腰撑膝。其他人的脚步声也陆续停下，但都停在"前面"。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（声音发颤）你们先走吧，别等我……论文我写得最慢，小组作业我拖后腿，现在连动一动，我都是最后一个。我怎么什么都不行啊！</div>
+        </div>
+        <div class="stage-direction">（静了两秒。王浩第一个转身走回来，其他人也没有立刻说话，只是一个接一个回到她身边。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">（看着她）林晓，你知道你刚才为什么越跑越累吗？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（苦笑）因为我体力差。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">不全是。你一直盯着我们跑到哪里了，急着追上，却没发现自己的节奏已经乱了。跑步又不是考试，没人因为你慢了几步，就给你判不及格。你可以跑，也可以走，可以停下来喘口气；你要去的地方在前面，不在别人的脚后跟。</div>
+        </div>
+        <div class="stage-direction">（林晓抬头看他，呼吸仍然急促，却第一次没有急着道歉。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">其实我也没资格说你。我拿到offer那天高兴不到十分钟，就开始想他们是不是发错人了。还没进公司，我已经在脑子里失败了好多次。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">我总想证明自己配得上那个机会，却忘了我是去学习的，不是去表演什么都会。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">还有我。我连师姐问我有没有看懂文献都不敢说实话。我怕她觉得我基础差，也怕在AI变化这么快的时候，选错研究方向就被落下。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">（深吸一口气）可是不懂就问，不是因为我不行，是因为我还有不会的东西。方向也不是今晚就必须决定一辈子。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">我以前也觉得，别人都在往前走，只有我停在原地。公司临时改了上班时间，我考完就得去报到，和好朋友的毕业旅行只能退掉。那几天我一边羡慕他们在大理，一边觉得自己什么都没赶上。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">（收起手机）后来我才发现，错过一趟旅行，不等于错过自己的生活。别人去了哪里，不该成为我判断这段时间有没有意义的标准。</div>
+        </div>
+        <div class="stage-direction">（众人安静下来。林晓看着他们，眼眶渐渐湿润。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">所以……你们也会觉得自己不够好吗？</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">（笑了一下）会，有时候还觉得自己挺离谱。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">我到现在也有很多文献看不懂。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">我偶尔还是会羡慕别人的旅行。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">我也有跑不动的时候。</div>
+        </div>
+        <div class="stage-direction">（众人轻轻笑起来，气氛慢慢松开。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">（指向跑道）谁规定了，必须把一切都想明白，才能继续往前走？你看，这一圈有起点，也有终点。跑累了就调呼吸，跑不动就休息，等状态好了，再接着跑。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">工作不会因为我第一天不会就不让我学，文献也不会因为沈悦问了问题就自己消失。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">（笑）你倒是会举例子。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">旅行错过了，还可以再约。没必要因为错过一次，就觉得自己什么都错过了。</div>
+        </div>
+        <div class="stage-direction">（林晓慢慢抬起头，看了看大家，又看向跑道。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">我好像一直都在害怕别人超过我。我怕作业做得不够好，怕让大家失望，更怕自己不够优秀。所以我什么都想做好，什么都不敢拒绝，明明已经很累了，还要假装没事。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（擦去眼泪，站直）可我不想再因为害怕落后，就逼着自己一直跑。明天我会重新和组员商量分工，做不到的时候就说，身体和情绪难受的时候也去求助。我还是会努力，但我想先学会按自己的节奏走。</div>
+        </div>
+        <div class="stage-direction">（王浩点点头。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">那现在呢？还跑吗？</div>
+        </div>
+        <div class="stage-direction">（林晓看了一眼跑道，笑了。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">走吧。这次，我想按自己的节奏走。</div>
+        </div>
+        <div class="stage-direction">（林晓率先迈出脚步。王浩、陈一帆、沈悦和赵宁陆续跟上。没有人冲到最前面，也没有人刻意拖在最后。五个人以舒服的速度并肩向前。）</div>
+        <div class="stage-direction">（张叔的手电光从远处晃过来，他走近，看见这一幕，把光压下去，没有照人。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">张叔</div>
+            <div class="dialogue-text">又是你们几个。（从兜里掏出一沓一次性纸杯，拎着保温杯挨个倒水）刚沏的，趁热喝。走累了就回，明天啊，太阳照常升，试也照样考，天塌不下来。</div>
+        </div>
+        <div class="stage-direction">（林晓接过纸杯，泪眼朦胧地笑了。五个人并肩慢慢走着，谁也没有加速。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（旁白）以前，我总以为成长就是不能停下、不能落后。后来我才明白，成长是知道什么时候该停下来，知道什么时候可以向别人求助，也是在重新出发时，不再只盯着别人的脚步。按自己的节奏呼吸，按自己的配速前进，慢一点，也是在向前。</div>
+        </div>
+    </section>
+
+    <section class="reveal">
+        <h2 class="act-title">第五幕｜假期：各自的时区，同一条跑道</h2>
+
+        <div class="scene-title">【场景七】校门口　期末周结束日　黄昏</div>
+        <div class="stage-direction">（众人拖着行李箱汇合，神情松弛，与第一幕判若两人。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">汇报，实习第一天没被辞退，带教请我喝了奶茶。靠垫已就位。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">我找师姐问了文献，也和她聊了研究方向。她说"这篇我当年看了一周"。（摊手）早知道她也不会，我白焦虑两个月。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">考完就马上上班，没赶上毕业旅行。这个假期我先回家陪爸妈，陪他们唠唠嗑，顺便学学做饭，目前炒鸡蛋水平稳定。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">我也不立"每天学习八小时"的 flag 了。以前一到放假，我就先担心自己会不会落后，恨不得把每天排满。现在先早睡、散步、见朋友、看一本闲书。奋斗要继续，但身体和心情，也算任务。</div>
+        </div>
+        <div class="stage-direction">（几个人掏出手机建群。群名："配速 5.0 养生团"。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">群规：打卡内容不限。散步可以，睡个好觉可以，今天没自我否定，也算。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">我先打一条："坦然接受这次错过毕业旅行，也接受自己的生活有别的安排。"</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">我打："主动求助一次，也允许自己慢慢确定方向。"</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">我打："承认我是去学习的，不是去表演什么都会。"</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">（看着大家，慢慢说）那我打："允许自己慢。"</div>
+        </div>
+        <div class="stage-direction">（几个人举起水瓶碰了一下，像碰杯。张叔的声音从远处传来："放假了啊 —— 路上慢点！"众人笑着挥手。）</div>
+
+        <div class="scene-title">【场景八】一个月后　PPT微信聊天框</div>
+        <div class="stage-direction">（舞台大屏或投影亮起，出现微信群"配速 5.0 养生团"的聊天界面。五个头像依次亮起，消息提示音轻轻响起。以下内容以聊天框形式逐条弹出。）</div>
+
+        <div class="dialogue">
+            <div class="dialogue-speaker">王浩</div>
+            <div class="dialogue-text">群公告更新：步数不设上限，速度不设标准。今天按自己的节奏走完，就是完成。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">林晓</div>
+            <div class="dialogue-text">以前一焦虑就把所有事情都揽过来，现在会先分工、会求助，也会按时睡觉。停下来不是退后，是把呼吸调回来。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">陈一帆</div>
+            <div class="dialogue-text">入职一个月，没被辞退（笑），也不再每天假装什么都会。不会就学，学不会就问，工作不是一次性证明自己。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">沈悦</div>
+            <div class="dialogue-text">我还没确定最终研究方向，但我每天读一篇、问一个问题。AI变化再快，也不能替我决定真正想研究什么。迷茫不是停滞，是在辨认方向。</div>
+        </div>
+        <div class="dialogue">
+            <div class="dialogue-speaker">赵宁</div>
+            <div class="dialogue-text">上班一个月，刚开始总觉得自己晚了一步。后来发现，毕业旅行错过了，但我也正在自己的第一段工作里认识新的风景。节奏不是别人帮我排的，是我一步一步走出来的。</div>
+        </div>
+        <div class="stage-direction">（聊天框最后弹出群公告："允许每个人有自己的配速，走过自己的每一圈。"五个头像同时亮起一个"收到"。灯光从屏幕上的聊天框慢慢转回五个人。）</div>
+    </section>
+
+    <section class="epilogue reveal">
+        <div class="epilogue-title">【尾声】</div>
+        <div class="stage-direction center">（暖黄灯光。众人并肩，以"走"代替跑，迎着光慢慢向前，脚步由五个人的，渐渐化成更多人的 —— 台下若有通道，可邀请几位同学从后排起身加入，没有则灯光渐暗。）</div>
+
+        <div class="narration">
+            <span class="narration-label">旁白</span>成长不是百米冲刺，更像夜里的跑道：有人步履匆匆，有人缓步沉淀，节奏各不相同，但脚步没有高低。夜色掩去旁人的身影，不必困在对比里内耗，允许自己有喘息的空隙。以体育心，跑过焦虑，按自己的节奏奔跑，也按自己的节奏成长。
+        </div>
+
+        <div class="stage-direction center">（剧终。）</div>
+    </section>
+
+    <div class="fin reveal">
+        <div class="fin-text">完</div>
+        <div class="fin-line"></div>
+    </div>
+
+</main>
+
+<script>
+    // 滚动进入视口时优雅淡入
+    (function () {
+        var items = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) {
+            items.forEach(function (el) { el.classList.add('is-visible'); });
+            return;
+        }
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        items.forEach(function (el) { observer.observe(el); });
+    })();
+</script>
+
+</body>
+</html>
